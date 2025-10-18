@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Contrato + Termo - Global Rastreamento</title>
+
+<!-- Bibliotecas para PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+  /* Tema laranja & preto - profissional */
+  :root{
+    --preto:#000000;
+    --fundo:#0f0f0f;
+    --card:#0b0b0b;
+    --laranja:#ff7b00;
+    --laranja-esc:#cc5a00;
+    --texto:#eaf0f6;
+    --muted:#b6bcc4;
+    --bordas:#222;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--fundo);
+    color:var(--texto);
+    font-family: "Times New Roman", Times, serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:28px auto;padding:18px}
+  .card{
+    background:linear-gradient(180deg, rgba(10,10,10,1), rgba(8,8,8,1));
+    border-radius:12px;padding:22px;border:1px solid var(--bordas);
+    box-shadow:0 8px 40px rgba(0,0,0,0.6);
+  }
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .brand{display:flex;flex-direction:column}
+  .brand h1{margin:0;color:var(--laranja);font-size:20px;letter-spacing:0.4px}
+  .brand small{color:var(--muted);font-size:12px}
+  .meta{color:var(--muted);font-size:13px;text-align:right}
+
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}
+  @media(max-width:800px){.grid{grid-template-columns:1fr}}
+  label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
+  input[type="text"], input[type="date"], input[type="number"], textarea, select{
+    width:100%;padding:10px;border-radius:8px;border:1px solid #222;background:#0b0b0b;color:var(--texto);
+    font-size:14px;margin-bottom:10px;
+  }
+  textarea{min-height:80px;resize:vertical}
+  .checks{display:flex;flex-direction:column;gap:6px;background:#0d0d0d;border:1px solid #222;padding:10px;border-radius:8px}
+  .checks label{display:flex;gap:8px;align-items:center;color:#fff;font-size:14px}
+  input[type="checkbox"]{accent-color:var(--laranja);transform:scale(1.1)}
+
+  .actions{display:flex;gap:10px;justify-content:space-between;margin-top:12px;align-items:center}
+  button{background:var(--laranja);color:#000;border:none;padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer}
+  button.secondary{background:transparent;color:var(--texto);border:1px solid #222}
+
+  /* Preview (conteúdo que vai para o PDF) */
+  #previewPdf{
+    background:#fff;color:#000;padding:26px;border-radius:6px;margin-top:18px;display:none;width:100%;
+  }
+  /* estilos de impressão legíveis */
+  .pdf-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .pdf-title{color:#cc5a00;font-size:16px;font-weight:700}
+  .pdf-meta{font-size:12px;color:#333}
+  .clause{background:#fff8f0;border:1px solid #ffd0a8;padding:10px;margin:10px 0;border-radius:4px}
+  .clause h3{margin:0 0 6px 0;color:#cc5a00;font-size:14px}
+  table.pdf-table{width:100%;border-collapse:collapse;margin-top:8px}
+  table.pdf-table th, table.pdf-table td{border:1px solid #ccc;padding:8px;font-size:12px;text-align:left;vertical-align:top}
+  .sign-area{margin-top:24px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .sign-box{text-align:center;width:48%}
+  .sign-line{border-top:1px solid #333;margin-top:48px;padding-top:8px}
+  @media(max-width:720px){.sign-box{width:100%}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div class="brand">
+          <h1>GLOBAL RASTREAMENTO</h1>
+          <small>Contrato + Termo de Adesão (Atualizado)</small>
+        </div>
+        <div class="meta">
+          CNPJ: 42.745.358/0001-93<br>
+          Rua Pedro Mendes, nº 27, Bairro Centro — Paulo Afonso – BA<br>
+          (75) 98819-0527 • globalrastreamento2020@gmail.com
+        </div>
+      </header>
+
+      <!-- Formulário de entrada -->
+      <form id="mainForm">
+        <div class="grid">
+          <div>
+            <label>Nome / Razão Social</label>
+            <input id="nome" type="text" value="Anderson Willian Rodrigues" />
+          </div>
+          <div>
+            <label>CPF / CNPJ</label>
+            <input id="cpf" type="text" value="04101851590" />
+          </div>
+
+          <div>
+            <label>Endereço</label>
+            <input id="endereco" type="text" value="Rua da Alegria 101" />
+          </div>
+          <div>
+            <label>Cidade / UF</label>
+            <input id="cidade" type="text" value="PAULO AFONSO - BA" />
+          </div>
+
+          <div>
+            <label>Telefone</label>
+            <input id="telefone" type="text" value="75988057548" />
+          </div>
+          <div>
+            <label>E-mail</label>
+            <input id="email" type="text" value="awillian25@gmail.com" />
+          </div>
+
+          <div>
+            <label>Mensalidade por licença (R$)</label>
+            <input id="mensalidade" type="text" value="20,00" />
+          </div>
+          <div>
+            <label>Quantidade de veículos/usuários</label>
+            <input id="qtd" type="number" min="0" value="2" />
+          </div>
+
+          <div>
+            <label>Data do contrato</label>
+            <input id="data" type="date" value="2025-09-10" />
+          </div>
+          <div>
+            <label>Forma de pagamento</label>
+            <input id="forma" type="text" value="Cartão" />
+          </div>
+
+          <div>
+            <label>Taxa de ativação (R$)</label>
+            <input id="ativacao" type="text" value="0,00" />
+          </div>
+          <div>
+            <label>Vencimento da mensalidade</label>
+            <input id="vencimento" type="text" value="Todo dia 10 de cada mês" />
+          </div>
+        </div>
+
+        <label style="margin-top:8px;color:#e8e8e8">Planos e serviços contratados</label>
+        <div class="checks">
+          <label><input type="checkbox" id="plSoftware" checked> Licença de uso do software de rastreamento e gestão de frota</label>
+          <label><input type="checkbox" id="plChip" checked> Fornecimento de chip M2M</label>
+          <label><input type="checkbox" id="plRastreador"> Fornecimento de dispositivo rastreador</label>
+        </div>
+
+        <div class="actions">
+          <button id="btnGenerate" type="button">Gerar Contrato + Termo (Visualizar)</button>
+          <div style="color:var(--muted);font-size:13px">Após visualizar, clique em “Baixar PDF”.</div>
+        </div>
+      </form>
+
+      <!-- Preview para PDF -->
+      <div id="previewPdf"></div>
+
+      <div class="actions" style="margin-top:18px">
+        <button id="btnBack" class="secondary">⬅ Voltar</button>
+        <button id="btnDownload">⬇ Baixar PDF</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* Utilidades */
+function formatDataPtBr(isoDate){
+  if(!isoDate) { isoDate = new Date().toISOString().slice(0,10);}
+  const [y,m,d] = isoDate.split('-');
+  const meses=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  return `${d} de ${meses[parseInt(m,10)-1]} de ${y}`;
+}
+function escapeHtml(str){
+  if(str === undefined || str === null) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+}
+function checkedMark(b){ return b ? '[X]' : '[ ]'; }
+
+function readForm(){
+  return {
+    nome: document.getElementById('nome').value || '',
+    cpf: document.getElementById('cpf').value || '',
+    endereco: document.getElementById('endereco').value || '',
+    cidade: document.getElementById('cidade').value || '',
+    telefone: document.getElementById('telefone').value || '',
+    email: document.getElementById('email').value || '',
+    mensalidade: document.getElementById('mensalidade').value || '0,00',
+    qtd: document.getElementById('qtd').value || '0',
+    data: document.getElementById('data').value || new Date().toISOString().slice(0,10),
+    forma: document.getElementById('forma').value || '',
+    ativacao: document.getElementById('ativacao').value || '0,00',
+    vencimento: document.getElementById('vencimento').value || 'Todo dia 10 de cada mês',
+    plSoftware: document.getElementById('plSoftware').checked,
+    plChip: document.getElementById('plChip').checked,
+    plRastreador: document.getElementById('plRastreador').checked
+  };
+}
+
+/* Monta o HTML (Contrato + Termo) no preview */
+function buildPreviewHtml(f){
+  const dataFmt = formatDataPtBr(f.data);
+  const mensalNum = parseFloat((f.mensalidade||'0').replace('.','').replace(',','.')) || 0;
+  const qtdNum = parseInt(f.qtd||'0');
+  const totalCalc = mensalNum * (isNaN(qtdNum)?0:qtdNum);
+  const totalFmt = totalCalc.toFixed(2).replace('.',',');
+
+  return `
+  <div style="font-family:Times New Roman, serif; color:#111;">
+    <div class="pdf-header">
+      <div>
+        <div class="pdf-title">CONTRATO DE LICENÇA DE USO DE SOFTWARE E FORNECIMENTO OPCIONAL DE DISPOSITIVOS</div>
+        <div style="font-size:12px;color:#444;margin-top:6px">GLOBAL RASTREAMENTO — CNPJ 42.745.358/0001-93</div>
+      </div>
+      <div class="pdf-meta">
+        Rua Pedro Mendes, nº 27, Bairro Centro<br>Paulo Afonso – BA
+      </div>
+    </div>
+
+    <div class="clause"><h3>PARTES</h3>
+      <div>Pelo presente instrumento particular, de um lado: <strong>GLOBAL RASTREAMENTO</strong>, pessoa jurídica de direito privado, inscrita no CNPJ sob nº 42.745.358/0001-93, com sede na Rua Pedro Mendes, nº 27, Bairro Centro, Paulo Afonso – BA, telefone (75) 98819-0527, e-mail globalrastreamento2020@gmail.com, doravante denominada LICENCIANTE.</div>
+      <div style="margin-top:8px">E, de outro lado, o CLIENTE LICENCIADO, devidamente qualificado no Termo de Adesão, parte integrante deste contrato, doravante denominado apenas LICENCIADO.</div>
+      <div style="margin-top:8px"><strong>CLIENTE:</strong> ${escapeHtml(f.nome)} — CPF/CNPJ: ${escapeHtml(f.cpf)}<br>
+      <strong>Endereço:</strong> ${escapeHtml(f.endereco)} • <strong>Cidade/UF:</strong> ${escapeHtml(f.cidade)}<br>
+      <strong>Telefone:</strong> ${escapeHtml(f.telefone)} • <strong>E-mail:</strong> ${escapeHtml(f.email)}</div>
+    </div>
+
+    <div class="clause"><h3>CLÁUSULA 1 – DO OBJETO</h3>
+      <div>1.1. O presente contrato tem por objeto a concessão de licença de uso não exclusiva, não transferível e inalienável do software de gestão e telemetria veicular da LICENCIANTE, acessível por meio do endereço eletrônico https://globalrastreamento.net.br, bem como a eventual comercialização de dispositivos rastreadores e chips M2M de telemetria.</div>
+    </div>
+
+    <div class="clause"><h3>CLÁUSULA 2 – DA NATUREZA JURÍDICA DA ATIVIDADE</h3>
+      <div>2.1. A LICENCIANTE atua exclusivamente como empresa de tecnologia, limitada ao fornecimento de software de gestão, plataforma tecnológica de rastreamento, dispositivos e suporte técnico.<br>
+      2.2. Este contrato não constitui: (a) contrato de monitoramento ou resposta a ocorrências; (b) contrato de proteção veicular, seguro ou gerenciamento de riscos; (c) prestação de serviços de vigilância, monitoramento ou segurança privada.<br>
+      2.3. A LICENCIANTE não se enquadra nas disposições da Lei nº 14.967/2024 (Estatuto da Segurança Privada) e normas da Polícia Federal, nem presta qualquer atividade sujeita a tal regulamentação.</div>
+    </div>
+
+    <div class="clause"><h3>CLÁUSULA 3 – DAS RESPONSABILIDADES DO LICENCIADO</h3>
+      <div>3.1. O LICENCIADO é o único responsável pela gestão de seus veículos, pelas informações extraídas do sistema e pela adoção das medidas que entender necessárias à sua operação e segurança.<br>
+      3.2. O LICENCIADO é responsável pelo custo de instalação, manutenção e funcionamento de rastreadores e chips, ainda que adquiridos da LICENCIANTE.<br>
+      3.3. O LICENCIADO declara estar ciente de que, caso deseje cobertura securitária, deverá contratar apólice de seguro junto a seguradora devidamente habilitada.</div>
+    </div>
+
+    <div class="clause"><h3>CLÁUSULA 4 – DA RESPONSABILIDADE EXCLUSIVA DO CONTRATANTE</h3>
+      <div>4.1. Toda e qualquer medida de acompanhamento em tempo real, tomada de decisão operacional ou ação de segurança relacionada aos veículos ou bens do LICENCIADO é de sua exclusiva responsabilidade, sendo a LICENCIANTE totalmente isenta de tais obrigações.</div>
+    </div>
+
+    <div class="clause"><h3>CLÁUSULA 5 – DOS SERVIÇOS DE TERCEIROS</h3>
+      <div>5.1. Caso o LICENCIADO deseje contratar serviços de monitoramento ou segurança, deverá fazê-lo por meio de empresas devidamente autorizadas pela Polícia Federal, não havendo qualquer vínculo jurídico ou responsabilidade da LICENCIANTE sobre tais contratações.</div>
+    </div>
+
+    <div class="clause"><h3>CLÁUSULA 6 – DAS PROIBIÇÕES</h3>
+      <div>6.1. É expressamente vedado ao LICENCIADO: (a) utilizar o software para oferecer a terceiros serviços de monitoramento, rastreamento ou segurança privada; (b) revender, sublicenciar, ceder ou transferir o software sem autorização prévia e expressa da LICENCIANTE; (c) alterar, copiar ou tentar reproduzir o software por qualquer meio.</div>
+    </div>
+
+    <div class="clause"><h3>CLÁUSULA 7 – DAS LIMITAÇÕES TÉCNICAS</h3>
+      <div>7.1. O LICENCIADO reconhece que o funcionamento do sistema depende de sinais de GPS, GSM/GPRS, internet e servidores, estando sujeito a falhas técnicas, áreas de sombra, interferências e indisponibilidades.<br>
+      7.2. As informações geradas pelo sistema têm caráter meramente indicativo, não constituindo prova absoluta de trajetos, posições ou eventos, tampouco garantia de recuperação de veículos ou prevenção de sinistros.</div>
+    </div>
+
+    <div class="clause"><h3>CLÁUSULA 8 – DA ISENÇÃO DE RESPONSABILIDADE</h3>
+      <div>8.1. A LICENCIANTE não se responsabiliza por: (a) falhas técnicas, interrupções ou indisponibilidades do sistema; (b) furtos, roubos, perdas ou danos sofridos pelo LICENCIADO; (c) custos com instalação, manutenção ou substituição de equipamentos; (d) prejuízos decorrentes do uso indevido do software ou hardware; (e) decisões operacionais ou de segurança tomadas pelo LICENCIADO.</div>
+    </div>
+
+    <div class="clause"><h3>CLÁUSULA 9 – DO SUPORTE</h3>
+      <div>9.1. A LICENCIANTE prestará suporte técnico relacionado ao uso do software, em horário comercial, por meio do telefone (75) 98819-0527 e do e-mail globalrastreamento2020@gmail.com.</div>
+    </div>
+
+    <div class="clause"><h3>CLÁUSULA 10 – DO PRAZO E PAGAMENTO</h3>
+      <div>10.1. O presente contrato terá vigência conforme estabelecido no Termo de Adesão, renovável automaticamente, salvo manifestação em contrário de qualquer das partes.<br>
+      10.2. O LICENCIADO pagará à LICENCIANTE os valores constantes do Termo de Adesão, estando sujeito à suspensão de acesso em caso de inadimplência.</div>
+    </div>
+
+    <div class="clause"><h3>CLÁUSULA 11 – DA RESCISÃO</h3>
+      <div>11.1. O presente contrato poderá ser rescindido por qualquer das partes, mediante aviso prévio de 30 (trinta) dias.<br>
+      11.2. Em caso de inadimplência superior a 30 (trinta) dias, a LICENCIANTE poderá suspender o acesso ao software e rescindir o contrato de pleno direito.</div>
+    </div>
+
+    <div class="clause"><h3>CLÁUSULA 12 – DAS ALTERAÇÕES LEGISLATIVAS</h3>
+      <div>12.1. Caso haja alteração na legislação que impacte a atividade de rastreamento e telemetria, as partes se comprometem a revisar as condições do presente contrato, sem que isso implique obrigação retroativa para a LICENCIANTE.</div>
+    </div>
+
+    <div class="clause"><h3>CLÁUSULA 13 – DO FORO</h3>
+      <div>13.1. Para dirimir quaisquer controvérsias oriundas deste contrato, fica eleito o foro da Comarca de Paulo Afonso – BA, com renúncia a qualquer outro, por mais privilegiado que seja.</div>
+    </div>
+
+    <!-- TERMO DE ADESÃO -->
+    <div style="page-break-before:always;"></div>
+    <div class="pdf-header">
+      <div class="pdf-title">TERMO DE ADESÃO</div>
+      <div class="pdf-meta">(Anexo ao Contrato de Licença de Uso de Software e Fornecimento Opcional de Dispositivos)</div>
+    </div>
+
+    <table class="pdf-table">
+      <tr><th>Nome / Razão Social</th><td>${escapeHtml(f.nome)}</td></tr>
+      <tr><th>CPF / CNPJ</th><td>${escapeHtml(f.cpf)}</td></tr>
+      <tr><th>Endereço</th><td>${escapeHtml(f.endereco)}</td></tr>
+      <tr><th>Cidade / UF</th><td>${escapeHtml(f.cidade)}</td></tr>
+      <tr><th>Telefone</th><td>${escapeHtml(f.telefone)}</td></tr>
+      <tr><th>E-mail</th><td>${escapeHtml(f.email)}</td></tr>
+    </table>
+
+    <div style="margin-top:12px">
+      <strong>Objeto do Termo:</strong>
+      <p>O LICENCIADO adere às condições do contrato principal, declarando ciência e concordância de que este instrumento tem natureza exclusivamente tecnológica, não abrangendo serviços de segurança, monitoramento ou vigilância.</p>
+    </div>
+
+    <div style="margin-top:10px">
+      <strong>Planos e serviços contratados:</strong>
+      <ul style="margin:6px 0 0 18px">
+        <li>${checkedMark(f.plSoftware)} Licença de uso do software de rastreamento e gestão de frota</li>
+        <li>${checkedMark(f.plChip)} Fornecimento de chip M2M</li>
+        <li>${checkedMark(f.plRastreador)} Fornecimento de dispositivo rastreador</li>
+      </ul>
+    </div>
+
+    <div style="margin-top:8px">
+      <strong>Valores e pagamento</strong>
+      <table class="pdf-table">
+        <tr><th>Taxa de ativação</th><td>R$ ${escapeHtml(f.ativacao)}</td></tr>
+        <tr><th>Mensalidade por licença</th><td>R$ ${escapeHtml(f.mensalidade)}</td></tr>
+        <tr><th>Quantidade de veículos/usuários</th><td>${escapeHtml(f.qtd)}</td></tr>
+        <tr><th>Valor mensal total</th><td>R$ ${escapeHtml(totalFmt)}</td></tr>
+        <tr><th>Forma de pagamento</th><td>${escapeHtml(f.forma)}</td></tr>
+        <tr><th>Vencimento</th><td>${escapeHtml(f.vencimento)}</td></tr>
+        <tr><th>Vigência</th><td>12 meses (renovação automática)</td></tr>
+      </table>
+    </div>
+
+    <div style="margin-top:12px">
+      <strong>Ciência do Licenciado</strong>
+      <p>O LICENCIADO declara que leu, compreendeu e concorda integralmente com as cláusulas do contrato principal; tem plena ciência de que a LICENCIANTE não presta serviços de segurança privada ou monitoramento; e assume integral responsabilidade pela gestão de seus veículos e por eventuais contratações de terceiros para monitoramento.</p>
+    </div>
+
+    <div class="sign-area">
+      <div class="sign-box">
+        <div class="sign-line">GLOBAL RASTREAMENTO — LICENCIANTE</div>
+      </div>
+      <div class="sign-box">
+        <div class="sign-line">${escapeHtml(f.nome)} — LICENCIADO</div>
+      </div>
+    </div>
+
+    <div style="margin-top:18px;font-size:12px;color:#444">Paulo Afonso – BA, ${dataFmt}</div>
+  </div>`;
+}
+
+/* DOM & Eventos */
+const preview = document.getElementById('previewPdf');
+document.getElementById('btnGenerate').addEventListener('click', ()=>{
+  const f = readForm();
+  preview.style.display = 'block';
+  preview.innerHTML = buildPreviewHtml(f);
+  preview.scrollIntoView({behavior:'smooth'});
+});
+document.getElementById('btnBack').addEventListener('click', ()=> window.history.back());
+
+/* Geração do PDF com paginação */
+document.getElementById('btnDownload').addEventListener('click', async ()=>{
+  if(preview.innerHTML.trim() === '') {
+    const f = readForm();
+    preview.style.display = 'block';
+    preview.innerHTML = buildPreviewHtml(f);
+  }
+  await new Promise(r => setTimeout(r,120));
+  const scale = 2;
+  const canvas = await html2canvas(preview, { scale, useCORS:true, backgroundColor:'#ffffff' });
+
+  const imgData = canvas.toDataURL('image/jpeg', 1.0);
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF('p','pt','a4');
+
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+
+  const imgProps = pdf.getImageProperties(imgData);
+  const imgW = pageW;
+  const imgH = (imgProps.height * imgW) / imgProps.width;
+
+  let heightLeft = imgH;
+  let position = 0;
+
+  pdf.addImage(imgData, 'JPEG', 0, position, imgW, imgH);
+  heightLeft -= pageH;
+
+  while(heightLeft > 0){
+    position = heightLeft - imgH;
+    pdf.addPage();
+    pdf.addImage(imgData, 'JPEG', 0, position, imgW, imgH);
+    heightLeft -= pageH;
+  }
+
+  // Numeração de páginas
+  const total = pdf.internal.getNumberOfPages();
+  for(let i=1;i<=total;i++){
+    pdf.setPage(i);
+    pdf.setFontSize(9);
+    pdf.setTextColor(120);
+    pdf.text(`Página ${i} de ${total}`, pageW-80, pageH-20);
+  }
+
+  pdf.save('Contrato_Termo_Global_Rastreamento.pdf');
+});
+</script>
+</body>
+</html>
